@@ -19,10 +19,10 @@ def create():
     item = request.args.get('item')
 
     if(item in items):
-        return "item already exists"
+        return "item already exists", 304
     else:
         items.add(item)
-        return "pass"
+        return "pass", 201
 
 @app.route('/delete/', methods=['GET'])
 def delete():
@@ -30,39 +30,32 @@ def delete():
 
     if(item in items):
         items.remove(item)
-        return "pass"
+        return "pass", 200
     else:
-        return "item does not exist"
+        return "item does not exist", 404
 
 @app.route('/update/', methods=['PUT'])
 def update():
     request_dict = request.args.to_dict()
-#    print(request_dict, file=sys.stderr)
-
-    
-
-
-#    olditem = request.args.get('old-item', None)
-#    repacementitem = request.args.get('replacement-item', None)
     
     if(('old-item' in request_dict) and ('replacement-item' in request_dict)):
         if(request_dict['old-item'] in items):
             items.remove(request_dict['old-item'])
             items.add(request_dict['replacement-item']) 
-            return "successfully updated"
+            return "successfully updated", 202
         else:
-            return "old-item does not exist"
+            return "old-item does not exist", 404
     else:
-        return "old-item and replacement-item values required"
+        return "old-item and replacement-item values required", 206
 
 @app.route('/read/', methods=['GET'])
 def read():
     item = request.args.get('item')
     
     if(item in items):
-        return "item: " + item + " exists in storage"
+        return "item: " + item + " exists in storage", 200
     else:
-        return "item does not exist"
+        return "item does not exist", 404
 
 
 if (__name__ == '__main__'):
